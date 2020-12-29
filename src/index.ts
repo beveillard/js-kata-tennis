@@ -4,85 +4,35 @@ const advantage2 = "Advantage player 2";
 const winner1 = "Player 1 wins the game";
 const winner2 = "Player 2 wins the game";
 const separator = " - ";
-const points40 = "40";
-const pointsPlus = "+";
-const pointsList = ["0", "15", "30", points40, pointsPlus];
-const error = "*";
+const pointsList = ["0", "15", "30", "40"];
 
 export function tennis(score, winner) {
 
-  switch (winner) {
-    case 1:
-      return player1wins(score);
-    case 2:
-      return player2wins(score);
-    default:
-      return error;
+  score[winner]++;
+  return [score, displayScore(score)];
+
+}
+
+export function displayScore(score) {
+
+  if (score[0] < 3) {
+    if (score[1] > 3) return winner2;
+    return displayBasicScore(score);
   }
-
-}
-
-export function extractPoints1(score) {
-  let index = score.indexOf(separator);
-
-  return score.slice(0, index);
-}
-
-export function extractPoints2(score) {
-  let index = score.indexOf(separator);
-
-  return score.slice(index + 3);
-}
-
-export function incrementPoints(points) {
-
-  for (let index = 0; index < (pointsList.length - 1); index++) {
-    if (points === pointsList[index]) {
-      return pointsList[++index];
-    }
+  if (score[1] < 3) {
+    if (score[0] > 3) return winner1;
+    return displayBasicScore(score);
   }
-
-  return error;
-}
-
-function player1wins(score) {
-
-  switch (score) {
-    case deuce:
-      return advantage1;
-    case advantage1:
-      return winner1;
-    case advantage2:
-      return deuce;
-    default:
-      let points1 = incrementPoints(extractPoints1(score));
-      let points2 = extractPoints2(score);
-      return display(points1, points2);
-  }
+  if (score[0] === score[1]) return deuce;
+  if (score[0] === score[1] + 1) return advantage1;
+  if (score[1] === score[0] + 1) return advantage2;
+  if (score[0] === score[1] + 2) return winner1;
+  if (score[1] === score[0] + 2) return winner2;
 
 }
 
-function player2wins(score) {
+export function displayBasicScore(score) {
 
-  switch (score) {
-    case deuce:
-      return advantage2;
-    case advantage1:
-      return deuce;
-    case advantage2:
-      return winner2;
-    default:
-      let points1 = extractPoints1(score);
-      let points2 = incrementPoints(extractPoints2(score));
-      return display(points1, points2);
-  }
+  return pointsList[score[0]] + separator + pointsList[score[1]];
 
-}
-
-function display(points1, points2) {
-  if ((points1 == points40) && (points2 == points40)) return deuce;
-  if (points1 == pointsPlus) return winner1;
-  if (points2 == pointsPlus) return winner2;
-
-  return points1 + separator + points2;
 }
